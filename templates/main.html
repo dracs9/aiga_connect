@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Dashboard | Академия Джиу‑Джитсу</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.18/main.min.css" rel="stylesheet"/>
+</head>
+<body>
+  <div class="dashboard">
+    <header>
+      <h1>🏆 Академия Джиу‑Джитсу</h1>
+      <span id="user-role"></span>
+    </header>
+
+    <section class="cards">
+      <div class="card">
+        <h2>Топ участников</h2>
+        <ul id="leaderboard"></ul>
+      </div>
+      <div class="card">
+        <h2>Ваш прогресс</h2>
+        <div class="progress-bar"><div id="progress-fill"></div></div>
+        <p id="points-count">0 очков</p>
+      </div>
+    </section>
+
+    <section class="calendar-section">
+      <h2>Календарь турниров</h2>
+      <div id="calendar"></div>
+    </section>
+
+    <section class="announcements">
+      <h2>Объявления</h2>
+      <ul>
+        <li>Турнир в Алматы — 15 августа</li>
+        <li>Набор группы 12–14 лет открывается</li>
+      </ul>
+    </section>
+
+    <section class="tasks" id="tasks-section" style="display:none;">
+      <h2>Задачи / Заявки</h2>
+      <ul>
+        <li>Утвердить расписание</li>
+        <li>Проверить отчёт посещаемости</li>
+      </ul>
+    </section>
+  </div>
+  <nav>
+    <a href="dashboard.html" class="active">Главная</a>
+    <a href="tournament.html">Турниры</a>
+    <a href="store.html">Магазин</a>
+    <a href="news.html">Новости</a>
+    <a href="academy.html">Академия</a>
+    <a href="profile.html">Профиль</a>
+  </nav>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.18/main.min.js"></script>
+  <script src="scripts.js"></script>
+<style>
+/* базовые переменные */
+:root {
+  --bg: #0e0e0e;
+  --fg: #ffffff;
+  --accent: #e10600;
+  --input-bg: #1a1a1a;
+  --border: #292929;
+  --radius: 10px;
+  --shadow: 0 0 10px rgba(255, 0, 0, 0.25);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem;
+}
+
+.form-container, .dashboard {
+  background-color: #111;
+  border: 1px solid var(--border);
+  padding: 2rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 600px;
+}
+
+h1 {
+  text-align: center;
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+
+h2 {
+  margin-top: 1.5rem;
+  color: #ddd;
+  border-bottom: 1px solid var(--accent);
+  padding-bottom: 0.3rem;
+}
+
+label {
+  display: block;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+input, select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 0.25rem;
+  border: none;
+  background-color: var(--input-bg);
+  color: var(--fg);
+  border-radius: var(--radius);
+}
+
+button {
+  width: 100%;
+  margin-top: 1.5rem;
+  background-color: var(--accent);
+  border: none;
+  color: white;
+  padding: 12px;
+  font-size: 1rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #b20500;
+}
+
+ul {
+  margin-top: 0.5rem;
+  padding-left: 1rem;
+  list-style-type: '🔥 ';
+}
+
+.info-text {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: #999;
+  text-align: center;
+}
+ 
+      nav {
+      background-color: #111;
+      border-left: 1px solid var(--border);
+      width: 200px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+      box-sizing: border-box;
+    }
+
+    nav a {
+      color: var(--fg);
+      text-decoration: none;
+      padding: 10px 15px;
+      border-radius: var(--radius);
+      margin-bottom: 0.7rem;
+      font-weight: 600;
+      transition: background-color 0.3s;
+    }
+
+    nav a:hover,
+    nav a.active {
+      background-color: var(--accent);
+      color: #fff;
+    }
+
+    /* Макет с меню справа */
+    body {
+      flex-direction: row;
+    }
+
+    /* Адаптивность: на мобильных экранах меню снизу */
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+
+      .dashboard {
+        max-width: 100%;
+        margin: 0;
+        padding-bottom: 5rem; /* чтобы меню снизу не перекрывало */
+      }
+
+      nav {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid var(--border);
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 0.5rem 0;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        box-shadow: 0 -2px 10px rgba(255, 0, 0, 0.3);
+        background-color: #111;
+        z-index: 1000;
+      }
+
+      nav a {
+        margin-bottom: 0;
+        padding: 10px;
+        font-size: 0.9rem;
+        flex-grow: 1;
+        text-align: center;
+        border-radius: 0;}
+</style>
+</body>
+</html>

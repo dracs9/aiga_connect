@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Академия Джиу-Джитсу</title>
+  <style>
+    /* Базовые переменные */
+    :root {
+      --bg: #0e0e0e;
+      --fg: #ffffff;
+      --accent: #e10600;
+      --input-bg: #1a1a1a;
+      --border: #292929;
+      --radius: 10px;
+      --shadow: 0 0 10px rgba(225, 6, 0, 0.25);
+    }
+
+    /* Общие стили */
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg);
+      color: var(--fg);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 2rem;
+      min-height: 100vh;
+    }
+
+    /* Контейнер для формы */
+    .form-container {
+      width: 100%;
+      max-width: 480px;
+      background-color: #111;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem 2.5rem;
+      box-shadow: var(--shadow);
+      box-sizing: border-box;
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      font-weight: 700;
+      font-size: 2rem;
+    }
+
+    h2 {
+      margin-top: 1.5rem;
+      color: #ddd;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 0.3rem;
+      font-weight: 600;
+      font-size: 1.3rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 1.2rem;
+      font-size: 0.95rem;
+      color: #aaa;
+      font-weight: 500;
+    }
+
+    input[type="email"],
+    input[type="password"],
+    select {
+      width: 100%;
+      padding: 12px 14px;
+      margin-top: 6px;
+      border: none;
+      background-color: var(--input-bg);
+      color: var(--fg);
+      border-radius: var(--radius);
+      font-size: 1rem;
+      box-sizing: border-box;
+      transition: background-color 0.3s ease;
+    }
+    input[type="email"]:focus,
+    input[type="password"]:focus,
+    select:focus {
+      outline: none;
+      background-color: #2a2a2a;
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    button {
+      width: 100%;
+      margin-top: 2rem;
+      background-color: var(--accent);
+      border: none;
+      color: white;
+      padding: 14px 0;
+      font-size: 1.1rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #b20500;
+    }
+
+    .info-text {
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      color: #999;
+      text-align: center;
+      user-select: none;
+    }
+
+    @media (max-width: 520px) {
+      body {
+        padding: 1rem;
+      }
+      .form-container {
+        padding: 1.5rem 1.8rem;
+        max-width: 100%;
+      }
+      h1 {
+        font-size: 1.6rem;
+      }
+      h2 {
+        font-size: 1.1rem;
+      }
+      button {
+        font-size: 1rem;
+        padding: 12px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-container" id="auth-section">
+    <h1>🥋 Академия Джиу-Джитсу</h1>
+    <h2>Вход / Регистрация</h2>
+
+    <form id="auth-form">
+      <label for="role">Выберите роль</label>
+      <select id="role" required>
+        <option value="">— Выберите —</option>
+        <option value="student">Ученик</option>
+        <option value="parent">Родитель</option>
+        <option value="coach">Тренер</option>
+        <option value="admin">Администратор</option>
+      </select>
+
+      <label for="email">Электронная почта</label>
+      <input type="email" id="email" required />
+
+      <label for="password">Пароль</label>
+      <input type="password" id="password" required />
+
+      <button type="submit">Продолжить</button>
+    </form>
+
+    <p class="info-text">Вы получите письмо для подтверждения.</p>
+  </div>
+
+</body>
+</html>

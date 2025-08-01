@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>👥 Панель администратора</title>
+  <style>
+    :root {
+      --red: #e10600;
+      --dark-bg: #0f0f0f;
+      --section-bg: #1a1a1a;
+      --accent-bg: #300000;
+    }
+
+    body {
+      background: var(--dark-bg);
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 1.5rem;
+      margin: 0;
+    }
+
+    h1, h2 {
+      color: var(--red);
+    }
+
+    section {
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      background: var(--section-bg);
+      border-left: 6px solid var(--red);
+      border-radius: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      font-size: 0.95rem;
+    }
+
+    th, td {
+      padding: 8px;
+      border: 1px solid #333;
+      text-align: center;
+    }
+
+    th {
+      background: var(--accent-bg);
+    }
+
+    button {
+      background: var(--red);
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 2px;
+    }
+
+    button:hover {
+      background: #aa0400;
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      background: #2b2b2b;
+      color: white;
+      border: none;
+      margin-top: 8px;
+      font-size: 1rem;
+    }
+
+    .analytics p {
+      font-size: 1.1rem;
+      margin: 0.5rem 0;
+    }
+
+    .poll-results {
+      margin-top: 1rem;
+    }
+
+    ul {
+      padding-left: 1.2rem;
+    }
+
+    @media (max-width: 768px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      thead tr {
+        display: none;
+      }
+
+      td {
+        position: relative;
+        padding-left: 50%;
+        text-align: left;
+        border: none;
+        border-bottom: 1px solid #444;
+      }
+
+      td::before {
+        position: absolute;
+        top: 8px;
+        left: 12px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        font-weight: bold;
+        color: #aaa;
+      }
+
+      td:nth-of-type(1)::before { content: "Имя"; }
+      td:nth-of-type(2)::before { content: "Роль"; }
+      td:nth-of-type(3)::before { content: "Академия"; }
+      td:nth-of-type(4)::before { content: "Статус"; }
+      td:nth-of-type(5)::before { content: "Действия"; }
+    }
+  </style>
+</head>
+<body>
+  <h1>👥 Панель администратора</h1>
+
+  <section>
+    <h2>1. Управление пользователями</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Имя</th>
+          <th>Роль</th>
+          <th>Академия</th>
+          <th>Статус</th>
+          <th>Действия</th>
+        </tr>
+      </thead>
+      <tbody id="user-table">
+        <!-- динамически -->
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>2. Аналитика</h2>
+    <div class="analytics">
+      <p>Всего пользователей: <span id="user-count">0</span></p>
+      <p>Активных тренеров: <span id="coach-count">0</span></p>
+      <p>Турниров создано: <span id="tournament-count">5</span></p>
+    </div>
+  </section>
+
+  <section>
+    <h2>3. Опросы и фидбэк</h2>
+    <form onsubmit="createPoll(event)">
+      <label>Вопрос:</label>
+      <input type="text" id="poll-question" required />
+
+      <label>Варианты (через запятую):</label>
+      <input type="text" id="poll-options" required />
+
+      <button type="submit">Создать опрос</button>
+    </form>
+
+    <div id="poll-display" class="poll-results" style="display:none;">
+      <h3 id="poll-q"></h3>
+      <ul id="poll-options-list"></ul>
+    </div>
+  </section>
+
+<script>
+  const users = [
+    { name: "Айдана", role: "Тренер", academy: "Aiga Kids", status: "ожидает" },
+    { name: "Марат", role: "Ученик", academy: "Aiga Adults", status: "активен" },
+    { name: "Нурсултан", role: "Тренер", academy: "Aiga East", status: "забанен" },
+    { name: "Жанна", role: "Родитель", academy: "-", status: "активен" },
+  ];
+
+  function renderUsers() {
+    const tbody = document.getElementById("user-table");
+    tbody.innerHTML = "";
+    users.forEach((u, i) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${u.name}</td>
+        <td>${u.role}</td>
+        <td>${u.academy}</td>
+        <td>${u.status}</td>
+        <td>
+          ${u.status === "ожидает" ? `<button onclick="confirmUser(${i})">Подтвердить</button>` : ""}
+          ${u.status !== "забанен" ? `<button onclick="banUser(${i})">Бан</button>` : `<button onclick="activateUser(${i})">Активировать</button>`}
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById("user-count").textContent = users.length;
+    document.getElementById("coach-count").textContent = users.filter(u => u.role === "Тренер" && u.status === "активен").length;
+  }
+
+  function confirmUser(i) { users[i].status = "активен"; renderUsers(); }
+  function banUser(i) { users[i].status = "забанен"; renderUsers(); }
+  function activateUser(i) { users[i].status = "активен"; renderUsers(); }
+
+  renderUsers();
+
+  let currentPoll = null;
+
+  function createPoll(event) {
+    event.preventDefault();
+    const q = document.getElementById("poll-question").value.trim();
+    const rawOpts = document.getElementById("poll-options").value.trim();
+    const opts = rawOpts.split(",").map(o => o.trim());
+
+    if (!q || opts.length < 2) {
+      alert("Введите вопрос и минимум 2 варианта.");
+      return;
+    }
+
+    currentPoll = {
+      question: q,
+      options: opts,
+      votes: new Array(opts.length).fill(0),
+    };
+    showPoll();
+    event.target.reset();
+  }
+
+  function showPoll() {
+    if (!currentPoll) return;
+    document.getElementById("poll-display").style.display = "block";
+    document.getElementById("poll-q").textContent = currentPoll.question;
+
+    const list = document.getElementById("poll-options-list");
+    list.innerHTML = "";
+
+    currentPoll.options.forEach((opt, idx) => {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <strong>${opt}</strong> — ${currentPoll.votes[idx]} голосов
+        <button onclick="vote(${idx})">Голосовать</button>
+      `;
+      list.appendChild(li);
+    });
+  }
+
+  function vote(i) {
+    currentPoll.votes[i]++;
+    showPoll();
+  }
+</script>
+</body>
+</html>
