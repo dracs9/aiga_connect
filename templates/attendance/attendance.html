@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Посещения | Академия Джиу-Джитсу
+{% endblock %}
+
+{% block extra_css %}
+
+  <style>
+    .attendance-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    .attendance-card {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .attendance-date {
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    
+    .attendance-status {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    
+    .status-present {
+      background-color: rgba(0, 255, 0, 0.2);
+      color: #00ff00;
+    }
+    
+    .status-absent {
+      background-color: rgba(255, 0, 0, 0.2);
+      color: #ff0000;
+    }
+    
+    .status-late {
+      background-color: rgba(255, 165, 0, 0.2);
+      color: #ffa500;
+    }
+   nav {
+          width: 100%;
+          border-left: none;
+          border-top: 1px solid var(--border);
+          flex-direction: row;
+          justify-content: space-around;
+          padding: 0.5rem 0;
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          box-shadow: 0 -2px 10px rgba(255, 0, 0, 0.3);
+          background-color: #111;
+          z-index: 1000;
+        }
+
+        nav a {
+          margin-bottom: 0;
+          padding: 10px;
+          font-size: 0.9rem;
+          flex-grow: 1;
+          text-align: center;
+          border-radius: 0;
+        }
+
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="attendance-container">
+    {% if is_coach %}
+      <h1>Посещения учеников</h1>
+    {% else %}
+      <h1>Посещения</h1>
+    {% endif %}
+
+    {% if not is_coach %}
+      {% if streak > 1 %}
+
+        {% if streak < 5 %}
+          <h3>🔥{{ streak }} тренировки подряд! Так держать!🔥</h3>
+        {% else %}
+          <h3>🔥{{ streak }} тренировок подряд! Так держать!🔥</h3>
+        {% endif %}
+      {% endif %}
+    {% endif %}
+
+    {% if report %}
+      <div class="card">
+        <h2>Отчет по посещениям</h2>
+        <p>Общее количество посещений: {{ attendances.count }}</p>
+      </div>
+    {% endif %}
+
+    {% if attendances %}
+      {% for attendance in attendances %}
+        <div class="attendance-card">
+          {% if is_coach %}
+            <div>
+             <b>{{ attendance.student.first_name }} {{ attendance.student.last_name }}</b>
+            </div>
+          {% endif %}
+          <div class="attendance-date">{{ attendance.date|date:'d.m.Y' }}</div>
+          <span class="attendance-status {% if attendance.is_present %}
+              status-present
+            {% else %}
+              status-absent
+            {% endif %}">
+            {% if attendance.is_present %}
+              Присутствовал
+            {% else %}
+              Отсутствовал
+            {% endif %}
+          </span>
+          <div>
+            <b>Тренировка:</b> {{ attendance.training.title }}
+          </div>
+        </div>
+
+      {% endfor %}
+    {% else %}
+      <div class="card">
+        <p>Нет данных о посещениях</p>
+      </div>
+    {% endif %}
+
+    {% if not report %}
+      {% if is_coach %}
+        <form method="post" action="{% url 'attendance:mark' %}">
+          {% csrf_token %}
+          <label for="training">Выберите тренировку:</label>
+          <select name="training" id="training" required>
+            {% for training in trainings %}
+              <option value="{{ training.id }}">{{ training.title }}</option>
+            {% endfor %}
+          </select>
+          <label for="student">Выберите ученика:</label>
+          <select name="studen" id="student" required>
+            {% for student in students %}
+              <option value="{{ student.id }}">{{ student.first_name }} {{ student.last_name }}</option>
+            {% endfor %}
+          </select>
+          <p> </p>
+          <button type="submit" class="btn">Отметить посещение</button>
+        </form>
+      {% endif %}
+    {% endif %}
+  </div>
+
+  <nav>
+      <a href="{% url 'dashboard:home' %}">Главная</a>
+      <a href="{% url 'tournaments:list' %}">Турниры</a>
+      <a href="{% url 'store:list' %}">Магазин</a>
+    <a href="{% url 'announcements:list' %}">Новости</a>
+      <a href="{% url 'gyms:list' %}">Академия</a>
+      <a href="{% url 'attendance:list' %}" class="active">Посещения</a>
+      <a href="{% url 'users:profile' %}">Профиль</a>
+
+    </nav>
+{% endblock %}

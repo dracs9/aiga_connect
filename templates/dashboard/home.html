@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Главная | Академия Джиу-Джитсу</title>
+    <style>
+      /* Базовые переменные */
+      :root {
+        --bg: #0e0e0e;
+        --fg: #ffffff;
+        --accent: #e10600;
+        --input-bg: #1a1a1a;
+        --border: #292929;
+        --radius: 10px;
+        --shadow: 0 0 10px rgba(225, 6, 0, 0.25);
+      }
+      
+      body {
+        background: var(--bg);
+        color: var(--fg);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 2rem;
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      
+      h1,
+      h2 {
+        color: var(--accent);
+      }
+      
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+      }
+      
+      .card {
+        background: #111;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        box-shadow: var(--shadow);
+      }
+      
+      .card h3 {
+        color: var(--accent);
+        margin-top: 0;
+        border-bottom: 1px solid var(--accent);
+        padding-bottom: 0.5rem;
+      }
+      
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+      
+      .stat-item {
+        text-align: center;
+        padding: 1rem;
+        background: var(--input-bg);
+        border-radius: var(--radius);
+      }
+      
+      .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: var(--accent);
+      }
+      
+      .stat-label {
+        font-size: 0.9rem;
+        color: #aaa;
+        margin-top: 0.5rem;
+      }
+      
+      .list-item {
+        padding: 0.8rem;
+        margin-bottom: 0.5rem;
+        background: var(--input-bg);
+        border-radius: var(--radius);
+        border-left: 3px solid var(--accent);
+      }
+      
+      nav {
+        background-color: #111;
+        border-left: 1px solid var(--border);
+        width: 200px;
+        box-shadow: var(--shadow);
+        display: flex;
+        flex-direction: column;
+        padding: 1rem;
+        box-sizing: border-box;
+      }
+      
+      nav a {
+        color: var(--fg);
+        text-decoration: none;
+        padding: 10px 15px;
+        border-radius: var(--radius);
+        margin-bottom: 0.7rem;
+        font-weight: 600;
+        transition: background-color 0.3s;
+      }
+      
+      nav a:hover,
+      nav a.active {
+        background-color: var(--accent);
+        color: #fff;
+      }
+      
+      /* Макет с меню справа */
+      body {
+        display: flex;
+        flex-direction: row;
+      }
+      
+      /* Адаптивность: на мобильных экранах меню снизу */
+      @media (max-width: 768px) {
+        body {
+          flex-direction: column;
+        }
+      
+        .container {
+          max-width: 100%;
+          margin: 0;
+          padding-bottom: 5rem;
+        }
+      
+        nav {
+          width: 100%;
+          border-left: none;
+          border-top: 1px solid var(--border);
+          flex-direction: row;
+          justify-content: space-around;
+          padding: 0.5rem 0;
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          box-shadow: 0 -2px 10px rgba(255, 0, 0, 0.3);
+          background-color: #111;
+          z-index: 1000;
+        }
+      
+        nav a {
+          margin-bottom: 0;
+          padding: 10px;
+          font-size: 0.9rem;
+          flex-grow: 1;
+          text-align: center;
+          border-radius: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🥋 Добро пожаловать, {{ user.first_name }}!</h1>
+
+      <div class="dashboard-grid">
+        {% if user.role == 'student' %}
+          <!-- Данные для ученика -->
+          <div class="card">
+            <h3>Мои тренировки</h3>
+            {% if my_trainings %}
+              {% for training in my_trainings %}
+                <div class="list-item">
+                  <strong>{{ training.training.title }}</strong><br />
+                  <small>{{ training.training.gym.name }}</small>
+                </div>
+              {% endfor %}
+            {% else %}
+              <p>У вас пока нет активных тренировок</p>
+            {% endif %}
+          </div>
+
+          <div class="card">
+            <h3>Мои турниры</h3>
+            {% if my_tournaments %}
+              {% for tournament in my_tournaments %}
+                <div class="list-item">
+                  <strong>{{ tournament.tournament.title }}</strong><br />
+                  <small>{{ tournament.tournament.tournament_date|date:'d.m.Y' }}</small>
+                </div>
+              {% endfor %}
+            {% else %}
+              <p>У вас пока нет активных турниров</p>
+            {% endif %}
+          </div>
+
+          <div class="card">
+            <h3>Последние посещения</h3>
+            {% if recent_attendance %}
+              {% for attendance in recent_attendance %}
+                <div class="list-item">
+                  <strong>{{ attendance.date|date:'d.m.Y' }}</strong><br />
+                  <small>
+                    {% if attendance.is_present %}
+                      Присутствовал
+                    {% else %}
+                      Отсутствовал
+                    {% endif %}
+                  </small>
+                </div>
+              {% endfor %}
+            {% else %}
+              <p>Нет данных о посещениях</p>
+            {% endif %}
+          </div>
+        {% elif user.role == 'coach' %}
+          <!-- Данные для тренера -->
+          <div class="card">
+            <h3>Мои тренировки</h3>
+            {% if my_trainings %}
+              {% for training in my_trainings %}
+                <div class="list-item">
+                  <strong>{{ training.title }}</strong><br />
+                  <small>{{ training.gym.name }}</small>
+                </div>
+              {% endfor %}
+            {% else %}
+              <p>У вас пока нет тренировок</p>
+            {% endif %}
+          </div>
+
+          <div class="card">
+            <h3>Ожидающие заявки</h3>
+            {% if pending_applications %}
+              {% for application in pending_applications %}
+                <div class="list-item">
+                  <strong>{{ application.student.get_full_name }}</strong><br />
+                  <small>{{ application.training.title }}</small>
+                </div>
+              {% endfor %}
+            {% else %}
+              <p>Нет ожидающих заявок</p>
+            {% endif %}
+          </div>
+        {% elif user.role == 'admin' %}
+          <!-- Данные для администратора -->
+          <div class="card">
+            <h3>Статистика</h3>
+            <div class="stats">
+              <div class="stat-item">
+                <div class="stat-number">{{ total_students }}</div>
+                <div class="stat-label">Учеников</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">{{ total_coaches }}</div>
+                <div class="stat-label">Тренеров</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">{{ pending_applications }}</div>
+                <div class="stat-label">Заявок на тренировки</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">{{ pending_tournaments }}</div>
+                <div class="stat-label">Заявок на турниры</div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+
+        <div class="card">
+          <h3>Последние объявления</h3>
+          {% if announcements %}
+            {% for announcement in announcements %}
+              <div class="list-item">
+                <strong>{{ announcement.title }}</strong><br />
+                <small>{{ announcement.created_at|date:'d.m.Y' }}</small>
+              </div>
+            {% endfor %}
+          {% else %}
+            <p>Нет объявлений</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <nav>
+      <a href="{% url 'dashboard:home' %}" class="active">Главная</a>
+      <a href="{% url 'tournaments:list' %}">Турниры</a>
+      <a href="{% url 'store:list' %}">Магазин</a>
+      <a href="{% url 'announcements:list' %}">Новости</a>
+      <a href="{% url 'gyms:list' %}">Академия</a>
+      <a href="{% url 'attendance:list' %}">Посещения</a>
+      <a href="{% url 'users:profile' %}">Профиль</a>
+    </nav>
+  </body>
+</html>
