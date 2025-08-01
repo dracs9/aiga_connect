@@ -203,7 +203,13 @@
               {% for attendance in recent_attendance %}
                 <div class="list-item">
                   <strong>{{ attendance.date|date:'d.m.Y' }}</strong><br />
-                  <small>{% if attendance.is_present %}Присутствовал{% else %}Отсутствовал{% endif %}</small>
+                  <small>
+                    {% if attendance.is_present %}
+                      Присутствовал
+                    {% else %}
+                      Отсутствовал
+                    {% endif %}
+                  </small>
                 </div>
               {% endfor %}
             {% else %}
@@ -286,6 +292,7 @@
       <a href="{% url 'store:list' %}">Магазин</a>
       <a href="{% url 'announcements:list' %}">Новости</a>
       <a href="{% url 'gyms:list' %}">Академия</a>
+      <a href="{% url 'attendance:list' %}">📅 Посещения</a>
       <a href="{% url 'users:profile' %}">Профиль</a>
     </nav>
   </body>

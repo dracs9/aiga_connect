@@ -6,6 +6,7 @@
   <a href="{% url 'store:list' %}" class="{% if request.resolver_match.namespace == 'store' %}active{% endif %}">🛍 Магазин</a>
   <a href="{% url 'announcements:list' %}" class="{% if request.resolver_match.namespace == 'announcements' %}active{% endif %}">📣 Новости</a>
   <a href="{% url 'gyms:list' %}" class="{% if request.resolver_match.namespace == 'gyms' %}active{% endif %}">🥋 Академия</a>
+  <a href="{% url 'attendance:list' %}" class="{% if request.resolver_match.namespace == 'attendance' %}active{% endif %}">📅 Посещения</a>
   <a href="{% url 'users:profile' %}" class="{% if request.resolver_match.namespace == 'users' %}active{% endif %}">👤 Профиль</a>
   {% if user.is_staff %}
     <a href="{% url 'admin:index' %}" class="{% if request.resolver_match.namespace == 'admin' %}active{% endif %}">⚙️ Админ</a>

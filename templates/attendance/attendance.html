@@ -1,87 +1,110 @@
 {% extends 'base.html' %}
 
-{% block title %}Посещения | Академия Джиу-Джитсу{% endblock %}
+{% block title %}
+  Посещения | Академия Джиу-Джитсу
+{% endblock %}
 
 {% block extra_css %}
-<style>
-  .attendance-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem;
-  }
-  
-  .attendance-card {
-    background: var(--input-bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-  }
-  
-  .attendance-date {
-    color: var(--accent);
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-  }
-  
-  .attendance-status {
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    font-weight: 600;
-  }
-  
-  .status-present {
-    background-color: rgba(0, 255, 0, 0.2);
-    color: #00ff00;
-  }
-  
-  .status-absent {
-    background-color: rgba(255, 0, 0, 0.2);
-    color: #ff0000;
-  }
-  
-  .status-late {
-    background-color: rgba(255, 165, 0, 0.2);
-    color: #ffa500;
-  }
-</style>
+  <style>
+    .attendance-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    .attendance-card {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .attendance-date {
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    
+    .attendance-status {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    
+    .status-present {
+      background-color: rgba(0, 255, 0, 0.2);
+      color: #00ff00;
+    }
+    
+    .status-absent {
+      background-color: rgba(255, 0, 0, 0.2);
+      color: #ff0000;
+    }
+    
+    .status-late {
+      background-color: rgba(255, 165, 0, 0.2);
+      color: #ffa500;
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
-<div class="attendance-container">
-  <h1>📊 Посещения</h1>
-  
-  {% if report %}
-    <div class="card">
-      <h2>Отчет по посещениям</h2>
-      <p>Общее количество посещений: {{ attendances.count }}</p>
-    </div>
-  {% endif %}
-  
-  {% if attendances %}
-    {% for attendance in attendances %}
-      <div class="attendance-card">
-        <div class="attendance-date">{{ attendance.date|date:"d.m.Y" }}</div>
-        <span class="attendance-status status-{{ attendance.status }}">
-          {% if attendance.status == 'present' %}Присутствовал
-          {% elif attendance.status == 'absent' %}Отсутствовал
-          {% elif attendance.status == 'late' %}Опоздал
-          {% endif %}
-        </span>
+  <div class="attendance-container">
+    <h1>📊 Посещения</h1>
+
+    {% if report %}
+      <div class="card">
+        <h2>Отчет по посещениям</h2>
+        <p>Общее количество посещений: {{ attendances.count }}</p>
       </div>
-    {% endfor %}
-  {% else %}
-    <div class="card">
-      <p>Нет данных о посещениях</p>
-    </div>
-  {% endif %}
-  
-  {% if not report %}
-    <form method="post" action="{% url 'attendance:mark' %}">
-      {% csrf_token %}
-      <button type="submit" class="btn">Отметить посещение</button>
-    </form>
-  {% endif %}
-</div>
-{% endblock %} 
+    {% endif %}
+
+    {% if attendances %}
+      {% for attendance in attendances %}
+        <div class="attendance-card">
+          <div class="attendance-date">{{ attendance.date|date:'d.m.Y' }}</div>
+          <span class="attendance-status {% if attendance.is_present %}
+              status-present
+            {% else %}
+              status-absent
+            {% endif %}">
+            {% if attendance.is_present %}
+              Присутствовал
+            {% else %}
+              Отсутствовал
+            {% endif %}
+          </span>
+          <div>
+            <b>Тренировка:</b> {{ attendance.training.title }}
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="card">
+        <p>Нет данных о посещениях</p>
+      </div>
+    {% endif %}
+
+    {% if not report %}
+      {% if trainings %}
+        <form method="post" action="{% url 'attendance:mark' %}">
+          {% csrf_token %}
+          <label for="training">Выберите тренировку:</label>
+          <select name="training" id="training" required>
+            {% for training in trainings %}
+              <option value="{{ training.id }}">{{ training.title }}</option>
+            {% endfor %}
+          </select>
+          <button type="submit" class="btn">Отметить посещение</button>
+        </form>
+      {% else %}
+        <form method="post" action="{% url 'attendance:mark' %}">
+          {% csrf_token %}
+          <button type="submit" class="btn">Отметить посещение</button>
+        </form>
+      {% endif %}
+    {% endif %}
+  </div>
+{% endblock %}
