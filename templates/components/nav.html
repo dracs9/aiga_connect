@@ -1,0 +1,13 @@
+{% load static %}
+
+<nav class="main-nav">
+  <a href="{% url 'dashboard:home' %}" class="{% if request.resolver_match.namespace == 'dashboard' %}active{% endif %}">🏠 Главная</a>
+  <a href="{% url 'tournaments:list' %}" class="{% if request.resolver_match.namespace == 'tournaments' %}active{% endif %}">🏆 Турниры</a>
+  <a href="{% url 'store:list' %}" class="{% if request.resolver_match.namespace == 'store' %}active{% endif %}">🛍 Магазин</a>
+  <a href="{% url 'announcements:list' %}" class="{% if request.resolver_match.namespace == 'announcements' %}active{% endif %}">📣 Новости</a>
+  <a href="{% url 'gyms:list' %}" class="{% if request.resolver_match.namespace == 'gyms' %}active{% endif %}">🥋 Академия</a>
+  <a href="{% url 'users:profile' %}" class="{% if request.resolver_match.namespace == 'users' %}active{% endif %}">👤 Профиль</a>
+  {% if user.is_staff %}
+    <a href="{% url 'admin:index' %}" class="{% if request.resolver_match.namespace == 'admin' %}active{% endif %}">⚙️ Админ</a>
+  {% endif %}
+</nav>

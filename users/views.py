@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
@@ -9,6 +11,8 @@ from django.views.generic import CreateView, UpdateView
 
 from .forms import CustomAuthenticationForm, CustomUserCreationForm, UserProfileForm
 from .models import User
+
+logger = logging.getLogger(__name__)
 
 
 class CustomLoginView(LoginView):
@@ -35,15 +39,40 @@ class SignUpView(CreateView):
     success_url = reverse_lazy("dashboard:home")
 
     def form_valid(self, form):
-        response = super().form_valid(form)
-        # Автоматический вход после регистрации
-        username = form.cleaned_data.get("username")
-        password = form.cleaned_data.get("password1")
-        user = authenticate(username=username, password=password)
-        if user:
-            login(self.request, user)
-            messages.success(self.request, "Регистрация прошла успешно!")
-        return response
+        try:
+            # Сначала сохраняем пользователя
+            user = form.save()
+
+            # Автоматический вход после регистрации
+            username = form.cleaned_data.get("username")
+            password = form.cleaned_data.get("password1")
+            authenticated_user = authenticate(username=username, password=password)
+
+            if authenticated_user:
+                login(self.request, authenticated_user)
+                messages.success(self.request, "Регистрация прошла успешно!")
+                logger.info(f"Пользователь {username} успешно зарегистрирован и вошел в систему")
+            else:
+                messages.warning(
+                    self.request,
+                    "Регистрация прошла успешно, но автоматический вход не удался. Попробуйте войти вручную.",
+                )
+                logger.warning(
+                    f"Пользователь {username} зарегистрирован, но автоматический вход не удался"
+                )
+
+            return redirect(self.success_url)
+        except Exception as e:
+            logger.error(f"Ошибка при регистрации: {e}")
+            messages.error(self.request, "Произошла ошибка при регистрации. Попробуйте еще раз.")
+            return self.form_invalid(form)
+
+    def form_invalid(self, form):
+        """Обработка невалидной формы"""
+        for field, errors in form.errors.items():
+            for error in errors:
+                messages.error(self.request, f"Ошибка в поле '{field}': {error}")
+        return super().form_invalid(form)
 
 
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):

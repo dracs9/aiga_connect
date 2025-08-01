@@ -9,13 +9,13 @@ from .models import Tournament, TournamentApplication
 def tournament_list(request):
     """Список всех турниров"""
     tournaments = Tournament.objects.filter(is_active=True).order_by("tournament_date")
-    return render(request, "tournament.html", {"tournaments": tournaments})
+    return render(request, "tournaments/tournament.html", {"tournaments": tournaments})
 
 
 def tournament_detail(request, pk):
     """Детальная информация о турнире"""
     tournament = get_object_or_404(Tournament, pk=pk)
-    return render(request, "tournament.html", {"tournament": tournament})
+    return render(request, "tournaments/tournament.html", {"tournament": tournament})
 
 
 @login_required
@@ -53,4 +53,4 @@ def my_tournaments(request):
         applications = TournamentApplication.objects.filter(participant=request.user)
         tournaments = [app.tournament for app in applications]
 
-    return render(request, "tournament.html", {"tournaments": tournaments})
+    return render(request, "tournaments/tournament.html", {"tournaments": tournaments})

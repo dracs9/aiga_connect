@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Турниры | Академия Джиу-Джитсу</title>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.18/main.min.css" rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #0e0e0e;
+        --fg: #ffffff;
+        --accent: #e10600;
+        --input-bg: #1a1a1a;
+        --border: #292929;
+        --radius: 10px;
+        --shadow: 0 0 10px rgba(255, 0, 0, 0.25);
+      }
+      
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: var(--bg);
+        color: var(--fg);
+        font-family: 'Segoe UI', sans-serif;
+        display: flex;
+        flex-direction: row;
+        min-height: 100vh;
+        box-sizing: border-box;
+      }
+      
+      .dashboard {
+        max-width: 800px;
+        margin: 1.5rem;
+        padding: 1.5rem;
+        background-color: #111;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        box-sizing: border-box;
+        flex-grow: 1;
+        overflow-y: auto;
+      }
+      
+      section {
+        background-color: #111;
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-sizing: border-box;
+      }
+      
+      h1 {
+        text-align: center;
+        color: var(--accent);
+        margin: 1rem 0 2rem;
+      }
+      
+      h2,
+      h3 {
+        color: #ddd;
+        margin-bottom: 1rem;
+      }
+      
+      .tournament-card {
+        background-color: var(--input-bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+      }
+      
+      .tournament-card:hover {
+        border-color: var(--accent);
+        box-shadow: 0 0 10px rgba(225, 6, 0, 0.2);
+      }
+      
+      .tournament-title {
+        color: var(--accent);
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+      
+      .tournament-info {
+        color: #aaa;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+      }
+      
+      .tournament-description {
+        color: #ccc;
+        margin-bottom: 1rem;
+        line-height: 1.4;
+      }
+      
+      .tournament-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        font-size: 0.85rem;
+        color: #888;
+      }
+      
+      .tournament-actions {
+        display: flex;
+        gap: 0.5rem;
+      }
+      
+      .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: var(--radius);
+        cursor: pointer;
+        font-size: 0.9rem;
+        text-decoration: none;
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+      
+      .btn-primary {
+        background-color: var(--accent);
+        color: white;
+      }
+      
+      .btn-primary:hover {
+        background-color: #b20500;
+      }
+      
+      .btn-secondary {
+        background-color: transparent;
+        color: var(--accent);
+        border: 1px solid var(--accent);
+      }
+      
+      .btn-secondary:hover {
+        background-color: var(--accent);
+        color: white;
+      }
+      
+      .btn-disabled {
+        background-color: #444;
+        color: #888;
+        cursor: not-allowed;
+      }
+      
+      .status-badge {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 500;
+      }
+      
+      .status-pending {
+        background-color: rgba(255, 170, 0, 0.2);
+        color: #ffaa00;
+      }
+      
+      .status-approved {
+        background-color: rgba(0, 255, 136, 0.2);
+        color: #00ff88;
+      }
+      
+      .status-rejected {
+        background-color: rgba(255, 68, 68, 0.2);
+        color: #ff4444;
+      }
+      
+      .empty-state {
+        text-align: center;
+        color: #888;
+        padding: 2rem;
+      }
+      
+      .empty-state-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+      }
+      
+      nav {
+        background-color: #111;
+        border-left: 1px solid var(--border);
+        width: 200px;
+        box-shadow: var(--shadow);
+        display: flex;
+        flex-direction: column;
+        padding: 1rem;
+        box-sizing: border-box;
+      }
+      
+      nav a {
+        color: var(--fg);
+        text-decoration: none;
+        padding: 10px 15px;
+        border-radius: var(--radius);
+        margin-bottom: 0.7rem;
+        font-weight: 600;
+        transition: background-color 0.3s;
+      }
+      
+      nav a:hover,
+      nav a.active {
+        background-color: var(--accent);
+        color: #fff;
+      }
+      
+      @media (max-width: 768px) {
+        body {
+          flex-direction: column;
+        }
+      
+        .dashboard {
+          max-width: 100%;
+          margin: 1rem;
+          padding: 1rem;
+        }
+      
+        nav {
+          width: 100%;
+          border-left: none;
+          border-top: 1px solid var(--border);
+          flex-direction: row;
+          justify-content: space-around;
+          padding: 0.5rem 0;
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          box-shadow: 0 -2px 10px rgba(255, 0, 0, 0.3);
+          background-color: #111;
+          z-index: 1000;
+        }
+      
+        nav a {
+          margin-bottom: 0;
+          padding: 10px;
+          font-size: 0.9rem;
+          flex-grow: 1;
+          text-align: center;
+          border-radius: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dashboard">
+      <h1>🏆 Турниры</h1>
+
+      <!-- Список турниров -->
+      <section id="tournaments-list">
+        <h2>Доступные турниры</h2>
+
+        {% if tournaments %}
+          {% for tournament in tournaments %}
+            <div class="tournament-card">
+              <div class="tournament-title">{{ tournament.title }}</div>
+              <div class="tournament-info">📍 {{ tournament.gym.name }} | 📅 {{ tournament.tournament_date|date:'d.m.Y H:i' }} | 🏆 {{ tournament.prize_pool }} ₸</div>
+              <div class="tournament-description">{{ tournament.description|truncatewords:30 }}</div>
+              <div class="tournament-meta">
+                <span>👥 {{ tournament.current_participants }}/{{ tournament.max_participants }} участников</span>
+                <span>💰 Взнос: {{ tournament.entry_fee }} ₸</span>
+              </div>
+              <div class="tournament-actions">
+                <a href="{% url 'tournaments:detail' tournament.pk %}" class="btn btn-secondary">Подробнее</a>
+                {% if user.is_authenticated and user.role == 'student' %}
+                  {% if tournament.is_full %}
+                    <button class="btn btn-disabled" disabled>Мест нет</button>
+                  {% else %}
+                    <form method="post" action="{% url 'tournaments:apply' tournament.pk %}" style="display: inline;">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-primary">Подать заявку</button>
+                    </form>
+                  {% endif %}
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="empty-state">
+            <div class="empty-state-icon">🏆</div>
+            <p>Пока нет доступных турниров</p>
+          </div>
+        {% endif %}
+      </section>
+
+      <!-- Мои турниры (для авторизованных пользователей) -->
+      {% if user.is_authenticated %}
+        <section id="my-tournaments">
+          <h2>Мои турниры</h2>
+
+          {% if user.role == 'student' %}
+            <!-- Для учеников показываем заявки на турниры -->
+            {% if user.tournamentapplication_set.all %}
+              {% for application in user.tournamentapplication_set.all %}
+                <div class="tournament-card">
+                  <div class="tournament-title">{{ application.tournament.title }}</div>
+                  <div class="tournament-info">📅 {{ application.tournament.tournament_date|date:'d.m.Y H:i' }} | 📍 {{ application.tournament.gym.name }}</div>
+                  <div class="tournament-meta">
+                    <span class="status-badge status-{{ application.status }}">
+                      {% if application.status == 'pending' %}
+                        Ожидает рассмотрения
+                      {% elif application.status == 'approved' %}
+                        Одобрена
+                      {% elif application.status == 'rejected' %}
+                        Отклонена
+                      {% elif application.status == 'cancelled' %}
+                        Отменена
+                      {% endif %}
+                    </span>
+                    <span>Подана: {{ application.applied_at|date:'d.m.Y' }}</span>
+                  </div>
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="empty-state">
+                <div class="empty-state-icon">📝</div>
+                <p>Вы еще не подавали заявки на турниры</p>
+              </div>
+            {% endif %}
+          {% elif user.role in 'coach,admin' %}
+            <!-- Для тренеров и админов показываем организованные турниры -->
+            {% if user.tournament_set.all %}
+              {% for tournament in user.tournament_set.all %}
+                <div class="tournament-card">
+                  <div class="tournament-title">{{ tournament.title }}</div>
+                  <div class="tournament-info">📅 {{ tournament.tournament_date|date:'d.m.Y H:i' }} | 📍 {{ tournament.gym.name }}</div>
+                  <div class="tournament-meta">
+                    <span>👥 {{ tournament.current_participants }}/{{ tournament.max_participants }} участников</span>
+                    <span>
+                      {% if tournament.is_active %}
+                        ✅ Активен
+                      {% else %}
+                        ❌ Неактивен
+                      {% endif %}
+                    </span>
+                  </div>
+                  <div class="tournament-actions">
+                    <a href="{% url 'tournaments:detail' tournament.pk %}" class="btn btn-secondary">Управление</a>
+                  </div>
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="empty-state">
+                <div class="empty-state-icon">🎯</div>
+                <p>Вы еще не организовали турниры</p>
+              </div>
+            {% endif %}
+          {% endif %}
+        </section>
+      {% endif %}
+    </div>
+
+    <nav>
+      <a href="{% url 'dashboard:home' %}">Главная</a>
+      <a href="{% url 'tournaments:list' %}" class="active">Турниры</a>
+      <a href="{% url 'store:list' %}">Магазин</a>
+      <a href="{% url 'announcements:list' %}">Новости</a>
+      <a href="{% url 'gyms:list' %}">Академия</a>
+      <a href="{% url 'users:profile' %}">Профиль</a>
+    </nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.18/main.min.js"></script>
+    <script>
+    // Календарь турниров
+    document.addEventListener('DOMContentLoaded', function () {
+      const calendarEl = document.getElementById('calendar');
+      if (calendarEl) {
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: 'dayGridMonth',
+          height: "auto",
+          events: [
+            {% for tournament in tournaments %}
+            {
+              title: '{{ tournament.title }}',
+              start: '{{ tournament.tournament_date|date:"Y-m-d" }}',
+              description: '{{ tournament.description|truncatewords:20 }}',
+              url: '{% url "tournaments:detail" tournament.pk %}'
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+          ],
+          eventClick: function (info) {
+            if (info.event.url) {
+              window.location.href = info.event.url;
+            }
+          }
+        });
+        calendar.render();
+      }
+    });
+  </script>
+  </body>
+</html>

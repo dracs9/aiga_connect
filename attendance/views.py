@@ -10,7 +10,7 @@ from .models import Attendance
 def attendance_list(request):
     """Список посещений"""
     attendances = Attendance.objects.filter(student=request.user).order_by("-date")
-    return render(request, "attendance.html", {"attendances": attendances})
+    return render(request, "attendance/attendance.html", {"attendances": attendances})
 
 
 @login_required
@@ -24,11 +24,13 @@ def mark_attendance(request):
         messages.success(request, "Посещение отмечено")
         return redirect("attendance:list")
 
-    return render(request, "attendance.html")
+    return render(request, "attendance/attendance.html")
 
 
 @login_required
 def attendance_report(request):
     """Отчет по посещениям"""
     attendances = Attendance.objects.filter(student=request.user).order_by("-date")
-    return render(request, "attendance.html", {"attendances": attendances, "report": True})
+    return render(
+        request, "attendance/attendance.html", {"attendances": attendances, "report": True}
+    )

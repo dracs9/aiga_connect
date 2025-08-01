@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Академия Джиу-Джитсу
+{% endblock %}
+
+{% block extra_css %}
+  <style>
+    /* Специфичные стили для главной страницы */
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+    
+    /* Контейнер для формы */
+    .form-container {
+      width: 100%;
+      max-width: 480px;
+      background-color: #111;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem 2.5rem;
+      box-shadow: var(--shadow);
+      box-sizing: border-box;
+      margin-bottom: 2rem;
+    }
+    
+    h1 {
+      text-align: center;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      font-weight: 700;
+      font-size: 2rem;
+    }
+    
+    h2 {
+      margin-top: 1.5rem;
+      color: #ddd;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 0.3rem;
+      font-weight: 600;
+      font-size: 1.3rem;
+    }
+    
+    .welcome-text {
+      text-align: center;
+      color: #aaa;
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+      line-height: 1.5;
+    }
+    
+    .auth-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    
+    .auth-button {
+      flex: 1;
+      padding: 14px 20px;
+      font-size: 1.1rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: none;
+      text-align: center;
+      transition: all 0.3s ease;
+      border: none;
+    }
+    
+    .auth-button.primary {
+      background-color: var(--accent);
+      color: white;
+    }
+    
+    .auth-button.primary:hover {
+      background-color: #b20500;
+    }
+    
+    .auth-button.secondary {
+      background-color: transparent;
+      color: var(--accent);
+      border: 2px solid var(--accent);
+    }
+    
+    .auth-button.secondary:hover {
+      background-color: var(--accent);
+      color: white;
+    }
+    
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+      max-width: 800px;
+    }
+    
+    .feature-card {
+      background-color: #111;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+    
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .feature-title {
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    
+    .feature-description {
+      color: #aaa;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+    
+    @media (max-width: 520px) {
+      body {
+        padding: 1rem;
+      }
+      .form-container {
+        padding: 1.5rem 1.8rem;
+        max-width: 100%;
+      }
+      h1 {
+        font-size: 1.6rem;
+      }
+      h2 {
+        font-size: 1.1rem;
+      }
+      .auth-buttons {
+        flex-direction: column;
+      }
+      .features {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <!-- Django template block end -->
+{% endblock %}
+
+{% block content %}
+  <div class="form-container">
+    <h1>🥋 Академия Джиу-Джитсу</h1>
+    <p class="welcome-text">Добро пожаловать в академию боевых искусств! Присоединяйтесь к нашему сообществу и развивайтесь вместе с нами.</p>
+
+    <div class="auth-buttons">
+      <a href="{% url 'users:login' %}" class="auth-button primary">Войти</a>
+      <a href="{% url 'users:signup' %}" class="auth-button secondary">Регистрация</a>
+    </div>
+  </div>
+
+  <div class="features">
+    <div class="feature-card">
+      <div class="feature-icon">🏆</div>
+      <div class="feature-title">Турниры</div>
+      <div class="feature-description">Участвуйте в соревнованиях и покажите свои навыки</div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">👥</div>
+      <div class="feature-title">Сообщество</div>
+      <div class="feature-description">Общайтесь с единомышленниками и делитесь опытом</div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">📈</div>
+      <div class="feature-title">Прогресс</div>
+      <div class="feature-description">Отслеживайте свой прогресс и достижения</div>
+    </div>
+  </div>
+{% endblock %}
