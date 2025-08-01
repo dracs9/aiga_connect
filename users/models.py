@@ -19,6 +19,9 @@ class User(AbstractUser):
     birth_date = models.DateField(null=True, blank=True, verbose_name="Дата рождения")
     points = models.PositiveIntegerField(default=0, verbose_name="Баллы")
     is_email_verified = models.BooleanField(default=False, verbose_name="Email подтвержден")
+    photo = models.ImageField(
+        upload_to="users/photos/", blank=True, null=True, verbose_name="Фото профиля"
+    )
 
     class Meta:
         verbose_name = "Пользователь"
