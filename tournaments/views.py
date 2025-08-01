@@ -24,7 +24,6 @@ def tournament_apply(request, pk):
     tournament = get_object_or_404(Tournament, pk=pk)
 
     if request.method == "POST":
-        # Проверяем, не подавал ли уже пользователь заявку
         existing_application = TournamentApplication.objects.filter(
             tournament=tournament, participant=request.user
         ).first()
@@ -46,10 +45,8 @@ def tournament_apply(request, pk):
 def my_tournaments(request):
     """Мои турниры (для участников) или организованные турниры (для организаторов)"""
     if request.user.role in ["coach", "admin"]:
-        # Для организаторов показываем созданные ими турниры
         tournaments = Tournament.objects.filter(organizer=request.user)
     else:
-        # Для участников показываем турниры, на которые они подали заявки
         applications = TournamentApplication.objects.filter(participant=request.user)
         tournaments = [app.tournament for app in applications]
 

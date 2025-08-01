@@ -75,13 +75,11 @@ def checkout(request):
         if reward.stock < 1:
             messages.error(request, "Награда закончилась.")
             return redirect("store:list")
-        # Проверка на дублирующую заявку (ожидающую)
         if RewardClaim.objects.filter(
             reward=reward, student=request.user, status="pending"
         ).exists():
             messages.error(request, "У вас уже есть заявка на эту награду, ожидающая обработки.")
             return redirect("store:list")
-        # Всё ок: создаём заявку, списываем баллы и уменьшаем stock
         RewardClaim.objects.create(
             reward=reward,
             student=request.user,

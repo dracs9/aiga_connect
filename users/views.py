@@ -40,10 +40,8 @@ class SignUpView(CreateView):
 
     def form_valid(self, form):
         try:
-            # Сначала сохраняем пользователя
             user = form.save()
 
-            # Автоматический вход после регистрации
             username = form.cleaned_data.get("username")
             password = form.cleaned_data.get("password1")
             authenticated_user = authenticate(username=username, password=password)

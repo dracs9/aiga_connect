@@ -13,17 +13,14 @@ class CustomUserCreationForm(UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Делаем некоторые поля необязательными
         self.fields["first_name"].required = False
         self.fields["last_name"].required = False
         self.fields["phone"].required = False
         self.fields["birth_date"].required = False
 
-        # Настраиваем виджеты
         for field in self.fields.values():
             field.widget.attrs["class"] = "form-control"
 
-        # Специальная настройка для поля даты
         self.fields["birth_date"].widget = forms.DateInput(
             attrs={"type": "date", "class": "form-control"}
         )
