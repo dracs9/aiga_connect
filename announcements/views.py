@@ -21,7 +21,29 @@ def announcement_detail(request, pk):
 def announcement_create(request):
     """Создание нового объявления"""
     if request.method == "POST":
-        # Логика создания объявления
+        title = request.POST.get("title", "").strip()
+        content = request.POST.get("content", "").strip()
+        priority = request.POST.get("priority", "medium")
+        errors = []
+        if not title:
+            errors.append("Заголовок обязателен.")
+        if not content:
+            errors.append("Содержание обязательно.")
+        if errors:
+            for error in errors:
+                messages.error(request, error)
+            return render(
+                request,
+                "news/news.html",
+                {"create": True, "title": title, "content": content, "priority": priority},
+            )
+        Announcement.objects.create(
+            title=title,
+            content=content,
+            priority=priority,
+            author=request.user,
+            is_published=True,
+        )
         messages.success(request, "Объявление успешно создано")
         return redirect("announcements:list")
 
